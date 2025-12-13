@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "start": "start /B react-scripts start && node openPages.js"
+  }
+}
