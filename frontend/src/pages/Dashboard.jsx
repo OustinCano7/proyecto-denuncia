@@ -23,9 +23,18 @@ function Dashboard() {
   const pendientes = denuncias.filter(d => d.estatus === "PENDIENTE").length;
   const asignadas = denuncias.filter(d => d.estatus === "ASIGNADA").length;
   const inspeccion = denuncias.filter(d => d.estatus === "INSPECCIÓN").length;
-  const mesActual = denuncias.filter(
-    d => new Date(d.created_at).getMonth() === new Date().getMonth()
-  ).length;
+
+  // ✅ CORRECCIÓN AQUÍ
+  const resueltasMes = denuncias.filter(d => {
+    const fecha = new Date(d.created_at);
+    const hoy = new Date();
+
+    return (
+      d.estatus === "RESUELTA" &&
+      fecha.getMonth() === hoy.getMonth() &&
+      fecha.getFullYear() === hoy.getFullYear()
+    );
+  }).length;
 
   return (
     <div className="dashboard-container">
@@ -37,7 +46,7 @@ function Dashboard() {
         <div className="kpi-card"><h3>Pendientes</h3><p>{pendientes}</p></div>
         <div className="kpi-card"><h3>Asignadas</h3><p>{asignadas}</p></div>
         <div className="kpi-card"><h3>En inspección</h3><p>{inspeccion}</p></div>
-        <div className="kpi-card"><h3>Resueltas del Mes</h3><p>{mesActual}</p></div>
+        <div className="kpi-card"><h3>Resueltas del Mes</h3><p>{resueltasMes}</p></div>
       </div>
     </div>
   );
