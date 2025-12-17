@@ -69,3 +69,58 @@ CREATE TABLE usuarios (
     clave VARCHAR(255) NOT NULL,
     fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE inspecciones (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    denuncia_id INT NOT NULL,
+    fecha_inspeccion DATE NOT NULL,
+    observaciones TEXT,
+    CONSTRAINT fk_inspeccion_denuncia
+    FOREIGN KEY (denuncia_id) REFERENCES denuncias(id)
+);
+
+CREATE TABLE actas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    denuncia_id INT NOT NULL,
+    descripcion TEXT NOT NULL,
+    fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+    tipo ENUM('ACTA','MULTA') DEFAULT 'ACTA',
+    CONSTRAINT fk_acta_denuncia
+    FOREIGN KEY (denuncia_id) REFERENCES denuncias(id)
+);
+
+CREATE TABLE citatorios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    denuncia_id INT NOT NULL,
+    fecha_citatorio DATE NOT NULL,
+    observaciones TEXT,
+    CONSTRAINT fk_citatorio_denuncia
+    FOREIGN KEY (denuncia_id) REFERENCES denuncias(id)
+);
+
+CREATE TABLE convenios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    denuncia_id INT NOT NULL,
+    acuerdos TEXT NOT NULL,
+    fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_convenio_denuncia
+    FOREIGN KEY (denuncia_id) REFERENCES denuncias(id)
+);
+
+CREATE TABLE apoyos_seguridad (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    denuncia_id INT NOT NULL,
+    corporacion VARCHAR(100),
+    fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_apoyo_denuncia
+    FOREIGN KEY (denuncia_id) REFERENCES denuncias(id)
+);
+
+CREATE TABLE multas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    denuncia_id INT NOT NULL,
+    monto DECIMAL(10,2),
+    motivo TEXT,
+    fecha DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
