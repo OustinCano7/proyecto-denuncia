@@ -47,6 +47,9 @@ function Bandeja() {
   /* 🔹 CARRUSEL IMÁGENES */
   const [imgIndex, setImgIndex] = useState(0);
 
+  const [visorAbierto, setVisorAbierto] = useState(false);
+  const [archivoIndex, setArchivoIndex] = useState(0);
+
   /* 🔹 AUTOPLAY CARRUSEL */
   useEffect(() => {
     const imagenes = evidencias.filter(e =>
@@ -647,6 +650,11 @@ function Bandeja() {
     VIDEO_EXT.test(e.file_path || "")
   );
 
+  const archivos = [
+    ...imagenes.map(a => ({ ...a, tipo: "imagen" })),
+    ...videos.map(a => ({ ...a, tipo: "video" }))
+  ];
+
   const validImgIndex =
     imagenes.length > 0 ? imgIndex % imagenes.length : 0;
 
@@ -736,6 +744,26 @@ function Bandeja() {
     minute: "2-digit",
     hour12: true,
   });
+
+  const abrirVisor = () => {
+    if (archivos.length === 0) {
+      alert("No hay evidencias disponibles");
+      return;
+    }
+
+    setArchivoIndex(0);
+    setVisorAbierto(true);
+  };
+
+  const siguiente = () => {
+    setArchivoIndex((prev) => (prev + 1) % archivos.length);
+  };
+
+  const anterior = () => {
+    setArchivoIndex((prev) =>
+      prev === 0 ? archivos.length - 1 : prev - 1
+    );
+  };
 
   /* ================= RENDER ================= */
   return (
@@ -1116,18 +1144,10 @@ function Bandeja() {
               <div className="evidencias-botones">
                 <button
                   className="btn-evidencia"
-                  onClick={abrirImagenes}
-                  disabled={!imagenes.length}
+                  onClick={abrirVisor}
+                  disabled={!archivos.length}
                 >
-                  📷 Abrir Evidencias
-                </button>
-
-                <button
-                  className="btn-evidencia"
-                  onClick={abrirVideos}
-                  disabled={!videos.length}
-                >
-                  🎬 Abrir Evidencias
+                  📂 Abrir Evidencias
                 </button>
               </div>
 
@@ -1275,6 +1295,46 @@ function Bandeja() {
                 Cerrar
               </button>
             </div>
+
+          </div>
+        </div>
+      )}
+
+      {visorAbierto && (
+        <div className="modal-overlay" onClick={() => setVisorAbierto(false)}>
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            style={{ textAlign: "center" }}
+          >
+
+            <h2>Visor de Evidencias</h2>
+
+            {archivos[archivoIndex]?.tipo === "imagen" ? (
+              <img
+                src={`${BASE_URL}/${archivos[archivoIndex].file_path.replace(/^\/+/, "")}`}
+                alt="evidencia"
+                style={{ maxWidth: "100%", maxHeight: "500px" }}
+              />
+            ) : (
+              <video
+                src={`${BASE_URL}/${archivos[archivoIndex].file_path.replace(/^\/+/, "")}`}
+                controls
+                style={{ maxWidth: "100%", maxHeight: "500px" }}
+              />
+            )}
+
+            <div style={{ marginTop: "15px" }}>
+              <button onClick={anterior}>⬅</button>
+              <button onClick={siguiente}>➡</button>
+            </div>
+
+            <button
+              style={{ marginTop: "10px" }}
+              onClick={() => setVisorAbierto(false)}
+            >
+              Cerrar
+            </button>
 
           </div>
         </div>

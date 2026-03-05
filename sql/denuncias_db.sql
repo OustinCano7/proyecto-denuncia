@@ -14,16 +14,37 @@ CREATE DATABASE denuncias_db;
 show tables;
 
 ///SELECCIONAR TABLA:
+select * from actas;
+select * from audiencias_resultados;
+select * from citatorios;
 select * from denuncias;
 select * from evidencias;
+select * from inspecciones;
 select * from log_sesiones;
+select * from reportes_denuncia;
 select * from usuarios;
 
 //ELIMINAR TABLAS:
+DROP TABLE actas;
+DROP TABLE audiencias_resultados;
+DROP TABLE citatorios;
 DROP TABLE denuncias;
 DROP TABLE evidencias;
+DROP TABLE inspecciones;
 DROP TABLE log_sesiones;
+DROP TABLE reportes_denuncia;
 DROP TABLE usuarios;
+
+//DESCRIBIR TABLA:
+DESCRIBE TABLE actas;
+DESCRIBE TABLE audiencias_resultados;
+DESCRIBE TABLE citatorios;
+DESCRIBE TABLE denuncias;
+DESCRIBE TABLE evidencias;
+DESCRIBE TABLE inspecciones;
+DESCRIBE TABLE log_sesiones;
+DESCRIBE TABLE reportes_denuncia;
+DESCRIBE TABLE usuarios;
 
 //CREAR TABLA:
 CREATE TABLE denuncias (
@@ -98,32 +119,6 @@ CREATE TABLE citatorios (
     FOREIGN KEY (denuncia_id) REFERENCES denuncias(id)
 );
 
-CREATE TABLE convenios (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    denuncia_id INT NOT NULL,
-    acuerdos TEXT NOT NULL,
-    fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_convenio_denuncia
-    FOREIGN KEY (denuncia_id) REFERENCES denuncias(id)
-);
-
-CREATE TABLE apoyos_seguridad (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    denuncia_id INT NOT NULL,
-    corporacion VARCHAR(100),
-    fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_apoyo_denuncia
-    FOREIGN KEY (denuncia_id) REFERENCES denuncias(id)
-);
-
-CREATE TABLE multas (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    denuncia_id INT NOT NULL,
-    monto DECIMAL(10,2),
-    motivo TEXT,
-    fecha DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
 CREATE TABLE reportes_denuncia (
     id INT AUTO_INCREMENT PRIMARY KEY,
     denuncia_id INT,
@@ -136,5 +131,23 @@ CREATE TABLE reportes_denuncia (
     fecha DATE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE audiencias_resultados (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  denuncia_id INT(11) NOT NULL,
+  fecha_audiencia DATE DEFAULT NULL,
+  hora_audiencia TIME DEFAULT NULL,
+  resultado VARCHAR(50) DEFAULT NULL,
+  observaciones TEXT DEFAULT NULL,
+  convenio TEXT DEFAULT NULL,
+  PRIMARY KEY (id),
+  KEY denuncia_id (denuncia_id),
+  CONSTRAINT fk_audiencias_denuncias
+    FOREIGN KEY (denuncia_id)
+    REFERENCES denuncias(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
+
 
 
