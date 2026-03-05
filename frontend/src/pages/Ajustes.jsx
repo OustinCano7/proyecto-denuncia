@@ -10,43 +10,40 @@ function Ajustes() {
   const [selectedUsuario, setSelectedUsuario] = useState(null);
   const [nuevaClave, setNuevaClave] = useState("");
 
-  // Cargar usuarios
-  const cargarUsuarios = async () => {
+  /* ================= FETCH SEGURO ================= */
+  const fetchSeguro = async (url, options = {}) => {
     try {
-      const res = await fetch(`${API_URL}/get_usuarios.php`);
-      if (!res.ok) throw new Error(`Error en la respuesta: ${res.status}`);
-      const data = await res.json();
-      console.log("Usuarios cargados:", data);
-
-      if (data.success === false) {
-        alert("Error cargando usuarios: " + data.message);
-        setUsuarios([]);
-      } else {
-        setUsuarios(data);
+      const res = await fetch(url, options);
+      const text = await res.text();
+      try {
+        return JSON.parse(text);
+      } catch {
+        console.error("Respuesta no JSON:", text);
+        return null;
       }
-    } catch (error) {
-      console.error("Error cargando usuarios:", error);
-      alert("No se pudieron cargar los usuarios. Revisa la ruta del backend y que XAMPP esté corriendo.");
+    } catch (e) {
+      console.error("Error en fetch:", e);
+      return null;
     }
   };
 
-  // Cargar sesiones
-  const cargarSesiones = async () => {
-    try {
-      const res = await fetch(`${API_URL}/get_sesiones.php`);
-      if (!res.ok) throw new Error(`Error en la respuesta: ${res.status}`);
-      const data = await res.json();
-      console.log("Sesiones cargadas:", data);
+  /* ================= CARGAR USUARIOS ================= */
+  const cargarUsuarios = async () => {
+    const data = await fetchSeguro(`${API_URL}/get_usuarios.php`);
+    if (data) setUsuarios(data);
+    else {
+      console.error("No se pudieron cargar los usuarios. Revisa el backend.");
+      setUsuarios([]);
+    }
+  };
 
-      if (data.success === false) {
-        alert("Error cargando sesiones: " + data.message);
-        setSesiones([]);
-      } else {
-        setSesiones(data);
-      }
-    } catch (error) {
-      console.error("Error cargando sesiones:", error);
-      alert("No se pudieron cargar las sesiones. Revisa la ruta del backend y que XAMPP esté corriendo.");
+  /* ================= CARGAR SESIONES ================= */
+  const cargarSesiones = async () => {
+    const data = await fetchSeguro(`${API_URL}/get_sesiones.php`);
+    if (data) setSesiones(data);
+    else {
+      console.error("No se pudieron cargar las sesiones. Revisa el backend.");
+      setSesiones([]);
     }
   };
 
@@ -55,7 +52,7 @@ function Ajustes() {
     cargarSesiones();
   }, []);
 
-  // Modal
+  /* ================= MODAL ================= */
   const abrirModal = (usuario) => {
     setSelectedUsuario(usuario);
     setNuevaClave("");
@@ -67,52 +64,46 @@ function Ajustes() {
     setShowModal(false);
   };
 
+  /* ================= CAMBIAR CONTRASEÑA ================= */
   const cambiarPassword = async () => {
     if (!nuevaClave) return alert("Ingresa la nueva contraseña");
 
-    try {
-      const res = await fetch(`${API_URL}/cambiar_password.php`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: selectedUsuario.id, nuevaClave }),
-      });
+    const data = await fetchSeguro(`${API_URL}/cambiar_password.php`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: selectedUsuario.id,
+        clave: nuevaClave // ⚡ Enviamos "clave" para que coincida con la DB
+      }),
+    });
 
-      const data = await res.json();
-      if (data.success) {
-        alert("Contraseña cambiada correctamente");
-        cerrarModal();
-      } else {
-        alert(data.message || "Error cambiando contraseña");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Error al cambiar la contraseña");
+    if (data?.success) {
+      alert("Contraseña cambiada correctamente");
+      cerrarModal();
+    } else {
+      alert(data?.message || "Error al cambiar la contraseña");
     }
   };
 
+  /* ================= ELIMINAR USUARIO ================= */
   const eliminarUsuario = async (id) => {
-    if (!window.confirm("¿Seguro que deseas eliminar este usuario?")) return;
+    if (!window.confirm("¿Seguro que deseas eliminar esta cuenta/usuario?")) return;
 
-    try {
-      const res = await fetch(`${API_URL}/delete_usuario.php`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
-      });
+    const data = await fetchSeguro(`${API_URL}/delete_usuario.php`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
 
-      const data = await res.json();
-      if (data.success) {
-        alert("Usuario eliminado correctamente");
-        cargarUsuarios();
-      } else {
-        alert(data.message || "No se pudo eliminar el usuario");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Error eliminando usuario");
+    if (data?.success) {
+      alert("Usuario eliminado correctamente");
+      cargarUsuarios();
+    } else {
+      alert(data?.message || "No se pudo eliminar el usuario");
     }
   };
 
+  /* ================= RENDER ================= */
   return (
     <div className="ajustes-container">
       <h2>Gestión de Usuarios</h2>
@@ -148,7 +139,7 @@ function Ajustes() {
                     className="btn-action delete"
                     onClick={() => eliminarUsuario(u.id)}
                   >
-                    Eliminar
+                    Eliminar cuenta/usuario
                   </button>
                 </td>
               </tr>
@@ -162,25 +153,23 @@ function Ajustes() {
       <table>
         <thead>
           <tr>
-            <th>ID</th>
+            <th>#</th>
             <th>Usuario</th>
             <th>Fecha / Hora</th>
-            <th>IP</th>
           </tr>
         </thead>
 
         <tbody>
           {sesiones.length === 0 ? (
             <tr>
-              <td colSpan="4">No hay sesiones registradas</td>
+              <td colSpan="3">No hay sesiones registradas</td>
             </tr>
           ) : (
-            sesiones.map((s) => (
+            sesiones.map((s, index) => (
               <tr key={s.id}>
-                <td>{s.id}</td>
+                <td>{index + 1}</td>
                 <td>{s.usuario}</td>
                 <td>{s.fecha_hora}</td>
-                <td>{s.ip}</td>
               </tr>
             ))
           )}

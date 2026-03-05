@@ -1,24 +1,57 @@
 <?php
+// Permitir peticiones desde cualquier origen
 header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Methods: POST");
 header("Content-Type: application/json");
 
-require_once "conexion.php";
+// Conexión a la base de datos
+$host = "localhost";
+$user = "root";
+$pass = "";
+$db   = "denuncias_db";
 
-$data = json_decode(file_get_contents("php://input"), true);
+$conn = new mysqli($host, $user, $pass, $db);
 
-if (!isset($data['id']) || !isset($data['nuevaClave'])) {
-    echo json_encode(["success" => false, "message" => "Faltan datos"]);
+// Verificar conexión
+if ($conn->connect_error) {
+    echo json_encode([
+        "success" => false,
+        "message" => "Error al conectar con la base de datos: " . $conn->connect_error
+    ]);
     exit;
 }
 
-$id = $data['id'];
-$nuevaClave = password_hash($data['nuevaClave'], PASSWORD_DEFAULT);
+// Leer los datos enviados por React
+$input = json_decode(file_get_contents("php://input"), true);
 
-try {
-    $stmt = $pdo->prepare("UPDATE usuarios SET clave = :clave WHERE id = :id");
-    $stmt->execute(['clave' => $nuevaClave, 'id' => $id]);
-    echo json_encode(["success" => true]);
-} catch (PDOException $e) {
-    echo json_encode(["success" => false, "message" => "Error al cambiar contraseña: " . $e->getMessage()]);
+if (!isset($input["id"]) || !isset($input["clave"])) {
+    echo json_encode([
+        "success" => false,
+        "message" => "Datos incompletos"
+    ]);
+    exit;
 }
-?>
+
+$id = intval($input["id"]);
+$nuevaClave = password_hash($input["clave"], PASSWORD_DEFAULT);
+
+// Preparar la consulta
+$stmt = $conn->prepare("UPDATE usuarios SET clave = ? WHERE id = ?");
+$stmt->bind_param("si", $nuevaClave, $id);
+
+// Ejecutar y enviar respuesta
+if ($stmt->execute()) {
+    echo json_encode([
+        "success" => true,
+        "message" => "Contraseña actualizada correctamente"
+    ]);
+} else {
+    echo json_encode([
+        "success" => false,
+        "message" => "Error al actualizar contraseña: " . $stmt->error
+    ]);
+}
+
+$stmt->close();
+$conn->close();

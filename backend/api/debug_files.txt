@@ -1,0 +1,43 @@
+Array
+(
+    [evidencias] => Array
+        (
+            [name] => Array
+                (
+                    [0] => descarga (1).jfif
+                    [1] => YTDown.com_YouTube_Asi-fue-el-mortal-accidente-de-motocicli_Media_0zR8kSthmt8_001_1080p.mp4
+                )
+
+            [full_path] => Array
+                (
+                    [0] => descarga (1).jfif
+                    [1] => YTDown.com_YouTube_Asi-fue-el-mortal-accidente-de-motocicli_Media_0zR8kSthmt8_001_1080p.mp4
+                )
+
+            [type] => Array
+                (
+                    [0] => image/jpeg
+                    [1] => video/mp4
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => C:\xampp\tmp\phpDB65.tmp
+                    [1] => C:\xampp\tmp\phpDB66.tmp
+                )
+
+            [error] => Array
+                (
+                    [0] => 0
+                    [1] => 0
+                )
+
+            [size] => Array
+                (
+                    [0] => 215253
+                    [1] => 6371389
+                )
+
+        )
+
+)

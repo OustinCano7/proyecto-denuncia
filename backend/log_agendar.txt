@@ -1,0 +1,25 @@
+2026-02-13 17:29:02 -> 
+2026-02-13 17:29:02 -> Array
+(
+    [id] => 204
+    [fecha_inspeccion] => 2026-02-13
+    [hora_inspeccion] => 10:28
+)
+
+2026-02-13 17:33:06 -> 
+2026-02-13 17:33:06 -> Array
+(
+    [id] => 204
+    [fecha_inspeccion] => 2026-02-13
+    [hora_inspeccion] => 10:33
+)
+
+2026-02-13 17:40:29 -> Datos recibidos: 
+2026-02-13 17:40:29 -> Datos incompletos
+2026-02-13 17:46:46 -> Array
+(
+    [id] => 204
+    [fecha_inspeccion] => 2026-02-13
+    [hora_inspeccion] => 10:46
+)
+

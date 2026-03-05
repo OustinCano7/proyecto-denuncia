@@ -112,3 +112,97 @@ th {
 .btn-close:hover {
   background-color: #999;
 }
+
+/* ===================================================== */
+/* ===================== RESPONSIVE ==================== */
+/* ===================================================== */
+
+/* 📱 Tablets */
+@media (max-width: 1024px) {
+
+  .ajustes-container {
+    padding: 15px;
+  }
+
+  th, td {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .modal-content {
+    width: 90%;
+  }
+
+}
+
+/* 📱 Móviles grandes */
+@media (max-width: 768px) {
+
+  .ajustes-container {
+    padding: 12px;
+  }
+
+  h2 {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  table {
+    font-size: 13px;
+  }
+
+  th, td {
+    padding: 7px;
+  }
+
+  /* Scroll horizontal si la tabla es muy grande */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .btn-action {
+    padding: 5px 10px;
+    font-size: 12px;
+    margin-bottom: 5px;
+  }
+
+  .modal-content {
+    width: 95%;
+    padding: 18px;
+  }
+
+  .modal-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .modal-buttons button {
+    flex: 1 1 100%;
+  }
+
+}
+
+/* 📱 Móviles pequeños */
+@media (max-width: 480px) {
+
+  h2 {
+    font-size: 16px;
+  }
+
+  th, td {
+    font-size: 12px;
+    padding: 6px;
+  }
+
+  .btn-action {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+
+  .modal-content {
+    padding: 15px;
+  }
+
+}

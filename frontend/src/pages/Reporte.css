@@ -1,149 +1,439 @@
-.reporte-container {
-  padding: 20px;
+.reporte-container{
+  padding:20px;
+  font-family:Arial, Helvetica, sans-serif;
 }
 
-/* Título principal */
-.reporte-container h2 {
-  font-size: 26px;
-  margin-bottom: 20px;
-  color: #7a0000; /* Vino más vivo */
-  font-weight: bold;
-  text-shadow: 0 0 3px rgba(0,0,0,0.2);
+/* ===================================================== */
+/* ===================== TITULOS ======================= */
+/* ===================================================== */
+
+.reporte-container h2{
+  margin-bottom:15px;
+  font-weight:600;
+  color:#7b1e2b; /* vino */
 }
 
-/* TABLA */
-table {
+/* ===================================================== */
+/* ===================== FILTROS ======================= */
+/* ===================================================== */
+
+.filtros-top,
+.filtros-bottom{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap:18px;
+  margin-bottom:20px;
+  align-items:end;
+}
+
+.filtro-item{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.filtro-item label{
+  font-size:13px;
+  font-weight:600;
+  color:#000;
+}
+
+.filtro-item input,
+.filtro-item select{
+  width:100%;
+  padding:9px;
+  border-radius:6px;
+  border:1px solid #ccc;
+  font-size:14px;
+  transition:0.2s ease;
+}
+
+.filtro-item input:focus,
+.filtro-item select:focus{
+  outline:none;
+  border-color:#7b1e2b;
+  box-shadow:0 0 0 2px rgba(123,30,43,0.15);
+}
+
+.filtros-botones{
+  display:flex;
+  gap:10px;
+  justify-content:flex-end;
+  align-items:flex-end;
+}
+
+/* ===================================================== */
+/* ===================== BOTONES ======================= */
+/* ===================================================== */
+
+.btn-limpiar{
+  background:#ff0000;
+  color:white;
+  border:none;
+  padding:9px 16px;
+  border-radius:6px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.btn-limpiar:hover{
+  background:#ff0000;
+}
+
+.btn-generar{
+  background:#0f82b8;
+  color:white;
+  border:none;
+  padding:9px 16px;
+  border-radius:6px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.btn-generar:hover{
+  background:#0f82b8;
+}
+
+.btn-ver{
+  background:#133E28;
+  color:white;
+  border:none;
+  padding:6px 14px;
+  border-radius:6px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.btn-ver:hover{
+  background: #133E28;
+}
+
+/* ===================================================== */
+/* ===================== TABLA ========================= */
+/* ===================================================== */
+
+/* Contenedor con límite exacto para 13 filas */
+.tabla-scroll {
+  max-height: 520px;   /* ajusta según el tamaño de tus filas */
+  overflow-y: auto;
+  overflow-x: auto;
+  border-radius: 12px;
+}
+
+/* Tabla */
+.tabla-scroll table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 20px;
-  background: #ffffff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 0 10px rgba(0,0,0,0.15);
 }
 
-th, td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
+/* Altura estable por fila */
+tbody tr{
+  height:52px;
 }
 
-/* Encabezados vivos */
-th {
-  background-color: #b30000;   /* Rojo vino vibrante */
-  color: white;
-  font-weight: bold;
+/* Encabezado fijo */
+th{
+  background:#7b1e2b;
+  color:white;
+  position:sticky;
+  top:0;
+  z-index:5;
+  padding:12px;
+  text-align:center;
+  font-weight:600;
 }
 
-/* Filas más visibles */
-tbody tr:hover {
-  background-color: #ffe6e6;
+/* Celdas */
+td{
+  padding:12px;
+  border-bottom:1px solid #e0e0e0;
+  text-align:center;
 }
 
-/* Botón principal */
-.btn-generate {
-  background-color: #b30000;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  cursor: pointer;
-  border-radius: 5px;
-  font-weight: bold;
-  transition: 0.2s ease;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+tbody tr:hover{
+  background:#f5e6e8;
 }
 
-.btn-generate:hover {
-  background-color: #d10000;
-  transform: scale(1.05);
-}
+/* ===================================================== */
+/* ===================== MODAL ========================= */
+/* ===================================================== */
 
-/* MODAL */
-.modal {
+.modal-bg{
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.6);
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.45);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
+  z-index: 99999;
 }
 
-/* Contenedor del modal */
-.modal-content {
-  background-color: #fff;
-  padding: 25px;
-  width: 480px;
+/* Caja blanca del modal */
+.modal{
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 14px;
+  width: 520px;
+  max-width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+  display: block; /* 👈 importante para que no se expanda */
+}
+
+/* Modal grande */
+.modal.large{
+  width: 800px;
   max-width: 95%;
-  border-radius: 10px;
-  box-shadow: 0 0 12px rgba(0,0,0,0.3);
-  animation: aparecer 0.2s ease-out;
 }
 
-/* Animación suave */
-@keyframes aparecer {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+.modal-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
 }
 
-.modal-content h3 {
-  margin-top: 0;
-  color: #8b0000; /* Vino más vivo */
-  font-size: 22px;
-  font-weight: bold;
+.modal-header button{
+  background:none;
+  border:none;
+  font-size:18px;
+  cursor:pointer;
 }
 
-.modal-content label {
-  display: block;
-  margin-top: 12px;
-  font-weight: bold;
-  color: #333;
+.error{
+  color:red;
 }
 
-/* Inputs */
-.modal-content select,
-.modal-content textarea,
-.modal-content input[type="file"] {
-  width: 100%;
-  padding: 10px;
-  margin-top: 6px;
-  border-radius: 5px;
-  border: 2px solid #c9c9c9;
-  transition: 0.2s ease;
+/* ===================================================== */
+/* ===================== BADGES ======================== */
+/* ===================================================== */
+
+.badge{
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:13px;
+  font-weight:600;
+  color:white;
+  display:inline-block;
+  min-width:140px;
+  text-align:center;
 }
 
-/* Efecto de enfoque */
-.modal-content select:focus,
-.modal-content textarea:focus {
-  outline: none;
-  border-color: #b30000;
-  box-shadow: 0 0 4px rgba(179,0,0,0.5);
+.badge-recibida{ background:#000000; }
+.badge-acta-levantada{ background:#00d9ff; }
+.badge-inspeccion-agendada{ background:#cc00ff; }
+.badge-inspeccion-completada{ background:#3c0649; }
+.badge-citatorio-dejado{ background:#00346b; }
+.badge-audiencia-agendada{ background:#ff0000; }
+.badge-resuelta{ background:#005714; }
+
+.badge-abierto{ background:#d32f2f; }
+.badge-en-proceso{ background:#f57c00; }
+.badge-cerrado{ background:#2e7d32; }
+
+.badge-sin-info{
+  background:#9e9e9e;
 }
 
-/* Botones del modal */
-.modal-buttons {
+/* ===================================================== */
+/* ===================== SCROLL VINO =================== */
+/* ===================================================== */
+
+.tabla-scroll::-webkit-scrollbar{
+  width:12px;
+}
+
+.tabla-scroll::-webkit-scrollbar-track{
+  background:#f1f1f1;
+}
+
+.tabla-scroll::-webkit-scrollbar-thumb{
+  background:#1e3a5f;
+  border-radius:10px;
+}
+
+.tabla-scroll::-webkit-scrollbar-thumb:hover{
+  background:#1e3a5f;
+}
+
+.estado-botones {
+  margin-top: 15px;
   display: flex;
-  justify-content: flex-end;
   gap: 10px;
-  margin-top: 18px;
+  flex-wrap: wrap;
 }
 
-.btn-close {
-  background-color: #888;
-  color: white;
-  border: none;
+.btn-estado {
   padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
-  border-radius: 5px;
-  transition: 0.2s;
   font-weight: bold;
+  transition: 0.3s ease;
 }
 
-.btn-close:hover {
-  background-color: #555;
-  transform: scale(1.05);
+.btn-estado.abierto {
+  background-color: #3498db;
+  color: white;
 }
 
+.btn-estado.proceso {
+  background-color: #f39c12;
+  color: white;
+}
+
+.btn-estado.cerrado {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn-estado:hover {
+  opacity: 0.8;
+}
+
+.modal textarea,
+.modal input,
+.modal select{
+  width:100%;
+  padding:10px;
+  border-radius:6px;
+  border:1px solid #ccc;
+  font-size:14px;
+}
+
+.modal button{
+  background:#0f82b8;
+  color:white;
+  border:none;
+  padding:10px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.modal button:hover{
+  opacity:0.9;
+}
+
+/* ===================================================== */
+/* ===================== RESPONSIVE ==================== */
+/* ===================================================== */
+
+/* 📱 Tablets */
+@media (max-width: 1024px){
+
+  .modal{
+    width: 90%;
+    padding: 20px;
+  }
+
+  .modal.large{
+    width: 95%;
+  }
+
+  .tabla-scroll{
+    max-height: 450px;
+  }
+
+  th, td{
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  .badge{
+    min-width: 120px;
+    font-size: 12px;
+  }
+}
+
+/* 📱 Móviles grandes */
+@media (max-width: 768px){
+
+  .reporte-container{
+    padding:15px;
+  }
+
+  .reporte-container h2{
+    font-size:18px;
+    text-align:center;
+  }
+
+  .filtros-top,
+  .filtros-bottom{
+    grid-template-columns: 1fr;
+    gap:14px;
+  }
+
+  .filtros-botones{
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+
+  .btn-limpiar,
+  .btn-generar{
+    width:100%;
+  }
+
+  .tabla-scroll{
+    max-height: 400px;
+  }
+
+  th, td{
+    font-size:12px;
+    padding:8px;
+  }
+
+  .badge{
+    min-width:100px;
+    font-size:11px;
+    padding:5px 8px;
+  }
+
+  .modal{
+    width:95%;
+    padding:18px;
+  }
+
+  .modal.large{
+    width:95%;
+  }
+}
+
+/* 📱 Móviles pequeños */
+@media (max-width: 480px){
+
+  .reporte-container{
+    padding:12px;
+  }
+
+  th, td{
+    font-size:11px;
+    padding:6px;
+  }
+
+  .tabla-scroll{
+    max-height: 350px;
+  }
+
+  .badge{
+    min-width:80px;
+    font-size:10px;
+    padding:4px 6px;
+  }
+
+  .estado-botones{
+    justify-content:center;
+  }
+
+  .btn-estado{
+    flex:1 1 100%;
+  }
+
+  .modal{
+    padding:15px;
+  }
+}

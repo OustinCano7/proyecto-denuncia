@@ -1,23 +1,61 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json");
 
-require_once "conexion.php";
+header("Access-Control-Allow-Origin: http://localhost:3000"); // 🔐 no usar *
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Content-Type: application/json; charset=UTF-8");
 
-$data = json_decode(file_get_contents("php://input"), true);
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    exit(0);
+}
 
-if (!isset($data['id'])) {
-    echo json_encode(["success" => false, "message" => "Faltan datos"]);
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode([
+        "success" => false,
+        "message" => "Método no permitido"
+    ]);
     exit;
 }
 
-$id = $data['id'];
+require_once __DIR__ . "/conexion.php";
+
+$input = json_decode(file_get_contents("php://input"), true);
+
+if (!isset($input["id"])) {
+  echo json_encode([
+    "success" => false,
+    "message" => "ID no recibido"
+  ]);
+  exit;
+}
+
+$id = intval($input["id"]);
 
 try {
-    $stmt = $pdo->prepare("DELETE FROM usuarios WHERE id = :id");
-    $stmt->execute(['id' => $id]);
-    echo json_encode(["success" => true]);
-} catch (PDOException $e) {
-    echo json_encode(["success" => false, "message" => "Error al eliminar usuario: " . $e->getMessage()]);
+
+    $stmt = $conn->prepare("DELETE FROM usuarios WHERE id = ?");
+    $stmt->bind_param("i", $id);
+
+    if ($stmt->execute()) {
+      echo json_encode(["success" => true]);
+    } else {
+      echo json_encode([
+        "success" => false,
+        "message" => "No se pudo eliminar"
+      ]);
+    }
+
+    $stmt->close();
+
+} catch (Exception $e) {
+
+    error_log("Error eliminar usuario: " . $e->getMessage());
+
+    echo json_encode([
+        "success" => false,
+        "message" => "Error interno"
+    ]);
 }
-?>
+
+$conn->close();

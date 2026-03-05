@@ -1,4 +1,15 @@
 <?php
+
+// 🔐 Respuesta JSON
+header("Content-Type: application/json; charset=UTF-8");
+
+// 🔐 Solo permitir POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(["success" => false, "message" => "Método no permitido"]);
+    exit;
+}
+
 // RUTA CORRECTA A PHPMailer
 require __DIR__ . '/PHPMailer/src/PHPMailer.php';
 require __DIR__ . '/PHPMailer/src/SMTP.php';
@@ -11,17 +22,21 @@ use PHPMailer\PHPMailer\Exception;
 $mail = new PHPMailer(true);
 
 try {
+
     // Config SMTP
     $mail->isSMTP();
     $mail->Host       = 'smtp.gmail.com';
     $mail->SMTPAuth   = true;
-    $mail->Username   = 'azkurth@gmail.com';            // Tu correo
-    $mail->Password   = 'bnqi wcvv hnfx kods';          // Password de aplicación
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Modo seguro
+
+    // 🔐 RECOMENDADO: usar variables de entorno
+    $mail->Username   = getenv('MAIL_USER');  
+    $mail->Password   = getenv('MAIL_PASS');  
+
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port       = 587;
 
     // Remitente
-    $mail->setFrom('azkurth@gmail.com', 'Sistema de Denuncias');
+    $mail->setFrom(getenv('MAIL_USER'), 'Sistema de Denuncias');
 
     // Destinatario
     $mail->addAddress('azkurth@hotmail.com');
@@ -34,8 +49,15 @@ try {
     // Enviar
     $mail->send();
 
-    echo "Correo enviado correctamente :)";
+    echo json_encode([
+        "success" => true,
+        "message" => "Correo enviado correctamente"
+    ]);
 
 } catch (Exception $e) {
-    echo "Error al enviar correo: " . $mail->ErrorInfo;
+
+    echo json_encode([
+        "success" => false,
+        "message" => "Error al enviar correo"
+    ]);
 }

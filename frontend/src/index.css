@@ -9,3 +9,131 @@ body {
   justify-content: center;
   padding: 30px;
 }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-contenido {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 6px;
+  text-align: center;
+}
+
+.btn-notificacion {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* ===================================================== */
+/* ===================== RESPONSIVE ==================== */
+/* ===================================================== */
+
+/* 💻 Tablets */
+@media (max-width: 1024px) {
+
+  .app-container {
+    padding: 20px;
+  }
+
+  .modal-contenido {
+    width: 90%;
+    max-width: 500px;
+  }
+
+  th, td {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+}
+
+/* 📱 Móviles grandes */
+@media (max-width: 768px) {
+
+  .app-container {
+    padding: 15px;
+  }
+
+  /* Scroll horizontal seguro para tablas */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  th, td {
+    font-size: 13px;
+    padding: 7px;
+  }
+
+  .modal-contenido {
+    width: 95%;
+    padding: 18px;
+  }
+
+  .btn-notificacion {
+    font-size: 22px;
+  }
+
+}
+
+/* 📱 Móviles pequeños */
+@media (max-width: 480px) {
+
+  .app-container {
+    padding: 10px;
+  }
+
+  th, td {
+    font-size: 12px;
+    padding: 6px;
+  }
+
+  .modal-contenido {
+    width: 95%;
+    padding: 15px;
+    border-radius: 6px;
+  }
+
+  .btn-notificacion {
+    font-size: 20px;
+  }
+
+}
+
+/* 📱 Pantallas muy pequeñas */
+@media (max-width: 360px) {
+
+  th, td {
+    font-size: 11px;
+    padding: 5px;
+  }
+
+  .btn-notificacion {
+    font-size: 18px;
+  }
+
+}

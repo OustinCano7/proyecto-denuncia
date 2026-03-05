@@ -1,52 +1,245 @@
 import { useEffect, useState } from "react";
+import { Pie, Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement
+} from "chart.js";
 import "./Dashboard.css";
+
+ChartJS.register(
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement
+);
+
+/* ===== CONFIG ===== */
+const TIPOS = [
+  "SUELO",
+  "AIRE",
+  "AGUA",
+  "RUIDO",
+  "FLORA SILVESTRE",
+  "FAUNA SILVESTRE"
+];
+
+const LABELS = [
+  "Suelo",
+  "Aire",
+  "Agua",
+  "Ruido",
+  "Flora silvestre",
+  "Fauna silvestre"
+];
+
+const COLORES = [
+  "#7B1E3A",
+  "#0d6efd",
+  "#198754",
+  "#ffc107",
+  "#20c997",
+  "#6f42c1"
+];
+
+const ESTADOS_INSPECCION = [
+  "INSPECCION AGENDADA",
+  "ACTA LEVANTADA",
+  "CITATORIO DEJADO",
+  "AUDIENCIA AGENDADA"
+];
+
+/* ===== ANIMACIÓN DE CONTEO ===== */
+const useCounter = (value, duration = 800) => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let start = 0;
+    const increment = value / (duration / 16);
+
+    const timer = setInterval(() => {
+      start += increment;
+      if (start >= value) {
+        setCount(value);
+        clearInterval(timer);
+      } else {
+        setCount(Math.floor(start));
+      }
+    }, 16);
+
+    return () => clearInterval(timer);
+  }, [value, duration]);
+
+  return count;
+};
 
 function Dashboard() {
   const [denuncias, setDenuncias] = useState([]);
 
   useEffect(() => {
-    const cargarDenuncias = async () => {
-      try {
-        const res = await fetch("http://localhost/proyecto-denuncia/backend/get_denuncias.php");
-        const text = await res.text();
-        const data = JSON.parse(text || "[]");
-        setDenuncias(data.map(d => ({ ...d, estatus: d.estatus || "PENDIENTE" })));
-      } catch (error) {
-        console.error("Error cargando denuncias:", error);
-        setDenuncias([]);
-      }
-    };
-    cargarDenuncias();
+    fetch("http://localhost/proyecto-denuncia/backend/get_denuncias.php")
+      .then(res => res.json())
+      .then(data => {
+        console.log("DATOS CRUDOS:", data); // 🔥 AQUÍ
+        setDenuncias(data || []);
+      })
+      .catch(() => setDenuncias([]));
   }, []);
 
-  const total = denuncias.length;
-  const pendientes = denuncias.filter(d => d.estatus === "PENDIENTE").length;
-  const asignadas = denuncias.filter(d => d.estatus === "ASIGNADA").length;
-  const inspeccion = denuncias.filter(d => d.estatus === "INSPECCIÓN").length;
+  /* ===== NORMALIZADOR ROBUSTO ===== */
+  const norm = (v = "") =>
+    v
+      .trim()
+      .toUpperCase()
+      .replace(/_/g, " ")
+      .replace(/\s+/g, " ");
 
-  // ✅ CORRECCIÓN AQUÍ
+  const hoy = new Date();
+
+  /* ===== KPIs ===== */
+  const total = denuncias.length;
+
+  const pendientes = denuncias.filter(
+    d => norm(d.estado_procedimiento) === "RECIBIDA"
+  ).length;
+
+  const enInspeccion = denuncias.filter(
+    d => ESTADOS_INSPECCION.includes(norm(d.estado_procedimiento))
+  ).length;
+
   const resueltasMes = denuncias.filter(d => {
-    const fecha = new Date(d.created_at);
+    if (!d.estado_procedimiento) return false;
+
+    if (d.estado_procedimiento.trim().toUpperCase() !== "RESUELTA")
+      return false;
+
+    if (!d.fecha_resolucion) return false;
+
+    // 🔥 Forzar formato correcto sin depender de Date()
+    const partes = d.fecha_resolucion.split(" ")[0]; // solo YYYY-MM-DD
+
+    if (!partes) return false;
+
+    const [anio, mes] = partes.split("-");
+
+    const anioNum = parseInt(anio);
+    const mesNum = parseInt(mes);
+
     const hoy = new Date();
 
     return (
-      d.estatus === "RESUELTA" &&
-      fecha.getMonth() === hoy.getMonth() &&
-      fecha.getFullYear() === hoy.getFullYear()
+      anioNum === hoy.getFullYear() &&
+      mesNum === hoy.getMonth() + 1
     );
   }).length;
 
+  /* ===== CONTADORES ANIMADOS ===== */
+  const totalAnim = useCounter(total);
+  const pendientesAnim = useCounter(pendientes);
+  const inspeccionAnim = useCounter(enInspeccion);
+  const resueltasAnim = useCounter(resueltasMes);
+
+  /* ===== GRAFICAS ===== */
+  const conteoTipos = TIPOS.map(tipo =>
+    denuncias.filter(d => norm(d.tipo_denuncia) === tipo).length
+  );
+
+  const totalTipos = conteoTipos.reduce((a, b) => a + b, 0);
+
+  const pieData = {
+    labels: LABELS,
+    datasets: [
+      {
+        data: conteoTipos,
+        backgroundColor: COLORES
+      }
+    ]
+  };
+
+  const barData = {
+    labels: LABELS,
+    datasets: [
+      {
+        label: "Denuncias",
+        data: conteoTipos,
+        backgroundColor: COLORES
+      }
+    ]
+  };
+
+  const pieOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: "bottom" },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            const value = ctx.raw;
+            const pct = totalTipos
+              ? ((value / totalTipos) * 100).toFixed(1)
+              : 0;
+            return `${ctx.label}: ${value} (${pct}%)`;
+          }
+        }
+      }
+    }
+  };
+
+  const barOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } }
+  };
+
   return (
     <div className="dashboard-container">
-      {/* Título de la sección */}
-      <h2>Dashboard</h2>
+      <h2>Dashboard de Denuncias</h2>
 
-      <div className="kpis">
-        <div className="kpi-card"><h3>Denuncias Totales</h3><p>{total}</p></div>
-        <div className="kpi-card"><h3>Pendientes</h3><p>{pendientes}</p></div>
-        <div className="kpi-card"><h3>Asignadas</h3><p>{asignadas}</p></div>
-        <div className="kpi-card"><h3>En inspección</h3><p>{inspeccion}</p></div>
-        <div className="kpi-card"><h3>Resueltas del Mes</h3><p>{resueltasMes}</p></div>
+      {/* ===== KPIs ===== */}
+      <div className="kpis-grid">
+        <div className="kpi-card total">
+          <h3>Denuncias totales</h3>
+          <p>{totalAnim}</p>
+        </div>
+
+        <div className="kpi-card pendientes">
+          <h3>Pendientes</h3>
+          <p>{pendientesAnim}</p>
+        </div>
+
+        <div className="kpi-card inspeccion">
+          <h3>En inspección</h3>
+          <p>{inspeccionAnim}</p>
+        </div>
+
+        <div className="kpi-card resueltas">
+          <h3>Resueltas del mes</h3>
+          <p>{resueltasAnim}</p>
+        </div>
+      </div>
+
+      {/* ===== GRAFICAS ===== */}
+      <div className="charts-grid">
+        <div className="chart-card">
+          <h3>Tipos de denuncia (%)</h3>
+          <div className="chart-wrapper">
+            <Pie data={pieData} options={pieOptions} />
+          </div>
+        </div>
+
+        <div className="chart-card">
+          <h3>Distribución por tipo</h3>
+          <div className="chart-wrapper">
+            <Bar data={barData} options={barOptions} />
+          </div>
+        </div>
       </div>
     </div>
   );

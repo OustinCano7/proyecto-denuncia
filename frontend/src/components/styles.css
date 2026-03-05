@@ -1,0 +1,217 @@
+/* ===================================================== */
+/* ===================== RESET GLOBAL ================== */
+/* ===================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Evita que imágenes rompan layout */
+img,
+video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Inputs consistentes */
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+}
+
+/* ===================================================== */
+/* ===================== VARIABLES ===================== */
+/* ===================================================== */
+
+:root {
+  --color-primary: #800000;
+  --color-primary-hover: #a00000;
+  --color-success: #27ae60;
+  --color-warning: #f39c12;
+  --color-danger: #e74c3c;
+  --color-background: #f5f5f5;
+  --color-white: #ffffff;
+  --color-border: #ddd;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --shadow-soft: 0 6px 18px rgba(0, 0, 0, 0.08);
+  --shadow-strong: 0 15px 35px rgba(0, 0, 0, 0.15);
+
+  --transition: 0.3s ease;
+}
+
+/* ===================================================== */
+/* ===================== UTILIDADES ==================== */
+/* ===================================================== */
+
+.text-center {
+  text-align: center;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Contenedor base adaptable */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ===================================================== */
+/* ===================== TABLAS BASE =================== */
+/* ===================================================== */
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table-responsive table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* ===================================================== */
+/* ===================== MODALES BASE ================== */
+/* ===================================================== */
+
+.modal-base-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-base {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  width: 500px;
+  max-width: 95%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-strong);
+}
+
+/* ===================================================== */
+/* ===================== SCROLL GLOBAL ================= */
+/* ===================================================== */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e3a5f;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #16304d;
+}
+
+/* ===================================================== */
+/* ===================== RESPONSIVE ==================== */
+/* ===================================================== */
+
+/* 💻 Tablets */
+@media (max-width: 1024px) {
+
+  html {
+    font-size: 15px;
+  }
+
+  .container {
+    padding: 18px;
+  }
+
+}
+
+/* 📱 Móviles grandes */
+@media (max-width: 768px) {
+
+  html {
+    font-size: 14px;
+  }
+
+  .container {
+    padding: 15px;
+  }
+
+  .modal-base {
+    width: 95%;
+    padding: 18px;
+  }
+
+}
+
+/* 📱 Móviles pequeños */
+@media (max-width: 480px) {
+
+  html {
+    font-size: 13px;
+  }
+
+  .container {
+    padding: 12px;
+  }
+
+  .modal-base {
+    padding: 15px;
+    border-radius: var(--radius-md);
+  }
+
+}
+
+/* 📱 Pantallas muy pequeñas */
+@media (max-width: 360px) {
+
+  html {
+    font-size: 12px;
+  }
+
+}

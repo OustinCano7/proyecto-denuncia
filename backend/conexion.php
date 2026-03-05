@@ -1,13 +1,26 @@
 <?php
+header("Content-Type: application/json; charset=UTF-8");
+
+// 🔐 Opcional: ocultar errores en producción
+ini_set('display_errors', 0);
+error_reporting(0);
+
 $host = "localhost";
-$db = "denuncias_db";
 $user = "root";
 $pass = "";
+$db   = "denuncias_db";
 
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die(json_encode(["success" => false, "message" => "Error de conexión: " . $e->getMessage()]));
+$conn = new mysqli($host, $user, $pass, $db);
+
+if ($conn->connect_error) {
+    http_response_code(500);
+    echo json_encode([
+        "success" => false,
+        "message" => "Error de conexión"
+    ]);
+    exit;
 }
+
+// 🔐 Forzar charset seguro
+$conn->set_charset("utf8mb4");
 ?>

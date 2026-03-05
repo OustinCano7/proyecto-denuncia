@@ -81,6 +81,7 @@
 /* TABLA */
 .table-container {
   margin-top: 20px;
+  overflow-x: auto; /* 🔥 evita que la tabla rompa en móvil */
 }
 .filters {
   display: flex;
@@ -140,6 +141,7 @@ th, td {
   text-align: left;
   box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
   animation: fadeIn .2s ease-in-out;
+  max-width: 95%; /* 🔥 evita desbordamiento en móvil */
 }
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.9); }
@@ -182,4 +184,136 @@ th, td {
 
 .user-info p {
   margin: 2px 0;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.user-info {
+  text-align: right;
+}
+
+.notificacion-btn {
+  position: relative;
+  font-size: 28px;
+  cursor: pointer;
+  color: #444;
+  transition: 0.3s;
+}
+
+.notificacion-btn:hover {
+  transform: scale(1.1);
+}
+
+.notificacion-btn.activa {
+  color: #000;
+}
+
+.notificacion-dot {
+  position: absolute;
+  top: 5px;
+  right: 2px;
+  width: 10px;
+  height: 10px;
+  background: red;
+  border-radius: 50%;
+}
+
+/* ===================================================== */
+/* ================= RESPONSIVE ======================== */
+/* ===================================================== */
+
+/* Tablets */
+@media (max-width: 1000px) {
+
+  .kpis {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .kpi-card {
+    width: 45%;
+  }
+}
+
+/* Tablets pequeñas */
+@media (max-width: 768px) {
+
+  .panel-container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .sidebar {
+    width: 100%;
+    text-align: center;
+  }
+
+  .sidebar-menu li {
+    justify-content: center;
+  }
+
+  .main-content {
+    padding: 15px;
+  }
+
+  .kpis {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .kpi-card {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .filters {
+    flex-direction: column;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+/* Celulares pequeños */
+@media (max-width: 480px) {
+
+  .sidebar-title {
+    font-size: 18px;
+  }
+
+  .sidebar-menu li {
+    font-size: 14px;
+  }
+
+  th, td {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .kpi-card {
+    height: auto;
+    padding: 15px;
+  }
+
+  .modal-content {
+    padding: 15px;
+  }
+
+  .notificacion-btn {
+    font-size: 22px;
+  }
 }

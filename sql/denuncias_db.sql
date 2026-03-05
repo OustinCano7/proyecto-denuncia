@@ -124,3 +124,17 @@ CREATE TABLE multas (
     fecha DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE reportes_denuncia (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    denuncia_id INT,
+    folio VARCHAR(50),
+    estatus_denuncia VARCHAR(100),
+    acciones TEXT,
+    conclusiones TEXT,
+    responsable VARCHAR(150),
+    estado_reporte VARCHAR(50),
+    fecha DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+

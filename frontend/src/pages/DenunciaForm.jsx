@@ -45,11 +45,15 @@ export default function DenunciaForm() {
     const [position, setPosition] = useState([19.4326, -99.1332]);
     const [direccion, setDireccion] = useState("");
     const [fotos, setFotos] = useState([]);
-    const [video, setVideo] = useState(null);
+    const [videos, setVideos] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [mensaje, setMensaje] = useState(""); // Mensaje en pantalla
+    const [mensajeError, setMensajeError] = useState(""); // Mensaje de error
 
     const sendForm = async (e) => {
         e.preventDefault();
+        setMensaje("");
+        setMensajeError("");
 
         const nombre = e.target.nombre_completo.value.trim();
         const telefono = e.target.telefono.value.trim();
@@ -59,7 +63,7 @@ export default function DenunciaForm() {
         const datos_involucrados = e.target.datos_involucrados.value.trim();
 
         if (!tipo || !descripcion || !correo) {
-            alert("Tipo, descripción y correo son obligatorios.");
+            setMensajeError("Tipo, descripción y correo son obligatorios.");
             return;
         }
 
@@ -78,8 +82,21 @@ export default function DenunciaForm() {
             formData.append("longitud", position[1]);
             formData.append("direccion", direccion);
 
-            Array.from(fotos).forEach(f => formData.append("fotos[]", f));
-            if (video) formData.append("video", video);
+            // Validación extra de seguridad
+            if (fotos.length > 5) {
+                setMensajeError("Máximo 5 imágenes permitidas.");
+                setLoading(false);
+                return;
+            }
+
+            if (videos.length > 2) {
+                setMensajeError("Máximo 2 videos permitidos.");
+                setLoading(false);
+                return;
+            }
+
+            fotos.forEach(f => formData.append("evidencias[]", f));
+            videos.forEach(v => formData.append("evidencias[]", v));
 
             const resp = await fetch(
                 "http://localhost/proyecto-denuncia/backend/api/submit_denuncia.php",
@@ -95,26 +112,34 @@ export default function DenunciaForm() {
                 throw new Error(`HTTP error ${resp.status}`);
             }
 
-            const data = await resp.json();
+            let data;
+            try {
+                data = await resp.json();
+            } catch (jsonErr) {
+                console.error("Error al parsear JSON:", jsonErr);
+                setMensajeError("Error: respuesta del servidor inválida.");
+                return;
+            }
 
             if (data.success) {
-                alert(
+                setMensaje(
                     `Denuncia enviada correctamente. ID: ${data.id} ` +
                     (data.correo_enviado ? "✅ Correo enviado" : "⚠ Correo NO enviado")
                 );
                 e.target.reset();
                 setFotos([]);
-                setVideo(null);
+                setVideos([]);
                 setPosition([19.4326, -99.1332]);
                 setDireccion("");
                 setAnonima(false);
             } else {
-                alert("Error: " + (data.error || "No se pudo enviar la denuncia"));
+                setMensajeError("Error: " + (data.error || "No se pudo enviar la denuncia"));
             }
+
         } catch (err) {
             console.error("Error al enviar el formulario:", err);
-            alert(
-                "Error al enviar el formulario. Puede ser un problema de conexión o CORS. Revisa la consola."
+            setMensajeError(
+                "Error al enviar el formulario. Puede ser un problema de conexión o del servidor."
             );
         } finally {
             setLoading(false);
@@ -127,6 +152,9 @@ export default function DenunciaForm() {
             <form className="form-container" onSubmit={sendForm}>
                 <h1>Formulario de Denuncia</h1>
                 <p>Describe la situación y ubícala en el mapa. Toda la información será confidencial.</p>
+
+                {mensaje && <div className="mensaje-exito">{mensaje}</div>}
+                {mensajeError && <div className="mensaje-error">{mensajeError}</div>}
 
                 <label className="checkbox-container">
                     <input type="checkbox" onChange={(e) => setAnonima(e.target.checked)} />
@@ -169,11 +197,62 @@ export default function DenunciaForm() {
                 <input type="text" value={direccion} onChange={(e) => setDireccion(e.target.value)} />
 
                 <h2>Evidencias</h2>
-                <label>Adjuntar fotos:</label>
-                <input type="file" accept="image/*" multiple onChange={(e) => setFotos(e.target.files)} />
-                <label>Adjuntar video:</label>
-                <input type="file" accept="video/*" onChange={(e) => setVideo(e.target.files[0])} />
+                <label>Adjuntar fotos (máximo 5):</label>
+                <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={(e) => {
+                        const archivos = Array.from(e.target.files);
 
+                        if (fotos.length + archivos.length > 5) {
+                            setMensajeError("Solo puedes adjuntar máximo 5 imágenes.");
+                            e.target.value = null;
+                            return;
+                        }
+
+                            setFotos(prev => [...prev, ...archivos]);
+                            e.target.value = null; // Permite volver a seleccionar
+                    }}
+                />
+                {fotos.length > 0 && (
+                    <div style={{ marginTop: "10px" }}>
+                        <strong>Imágenes seleccionadas:</strong>
+                        <ul>
+                            {fotos.map((f, i) => (
+                                <li key={i}>{f.name}</li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+                <label>Adjuntar videos (máximo 2):</label>
+                <input
+                    type="file"
+                    accept="video/*"
+                    multiple
+                    onChange={(e) => {
+                        const archivos = Array.from(e.target.files);
+
+                        if (videos.length + archivos.length > 2) {
+                            setMensajeError("Solo puedes adjuntar máximo 2 videos.");
+                            e.target.value = null;
+                            return;
+                        }
+
+                            setVideos(prev => [...prev, ...archivos]);
+                            e.target.value = null;
+                    }}
+                />
+                {videos.length > 0 && (
+                    <div style={{ marginTop: "10px" }}>
+                        <strong>Videos seleccionados:</strong>
+                        <ul>
+                            {videos.map((v, i) => (
+                                <li key={i}>{v.name}</li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
                 <button type="submit" className="btn-enviar" disabled={loading}>
                     {loading ? "Enviando..." : "Enviar Denuncia"}
                 </button>
