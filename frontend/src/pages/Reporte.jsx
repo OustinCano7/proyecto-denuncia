@@ -243,11 +243,6 @@ function ModalCrearReporte({ folio, onClose, onGuardado }) {
     <div className="modal-bg" onClick={onClose}>
       <div className="modal" onClick={e => e.stopPropagation()}>
 
-        <div className="modal-header">
-          <h3>Crear Reporte</h3>
-          <button onClick={onClose}>✖</button>
-        </div>
-
         <textarea
           placeholder="Acciones"
           onChange={e => setReporte({ ...reporte, acciones: e.target.value })}
@@ -288,31 +283,28 @@ return(
   <div className="modal-bg" onClick={() => cerrarModal(setShowBuscar)}>
     <div className="modal" onClick={(e) => e.stopPropagation()}>
 
-      <div className="modal-header">
-        <h3>Buscar Folio</h3>
-        <button onClick={() => cerrarModal(setShowBuscar)}>✖</button>
-      </div>
+      <div className="modal-body">
 
-      <div style={{ marginTop: "15px" }}>
-        <input
-          type="number"
-          placeholder="Ingrese folio"
-          value={folio}
-          onChange={(e) => setFolio(e.target.value)}
-          style={{ width: "100%", padding: "8px" }}
-        />
-      </div>
+        <div className="modal-row">
+          <label>Folio de la denuncia</label>
+          <input
+            type="number"
+            placeholder="Ingrese folio"
+            value={folio}
+            onChange={(e) => setFolio(e.target.value)}
+          />
+        </div>
 
-      {errorFolio && (
-        <p style={{ color: "red", marginTop: "10px" }}>
-          {errorFolio}
-        </p>
-      )}
+        {errorFolio && (
+          <p className="error">{errorFolio}</p>
+        )}
 
-      <div style={{ marginTop: "15px", textAlign: "right" }}>
-        <button className="btn-generar" onClick={buscarFolio}>
-          Continuar
-        </button>
+        <div style={{ textAlign: "right", marginTop: "10px" }}>
+          <button className="btn-generar" onClick={buscarFolio}>
+            Continuar
+          </button>
+        </div>
+
       </div>
 
     </div>
@@ -436,29 +428,55 @@ Gestionar
 
 {showVista && selectedReporte && (
 <div className="modal-bg" onClick={()=>cerrarModal(setShowVista)}>
-<div className="modal large scroll" onClick={e=>e.stopPropagation()}>
+<div className="modal large" onClick={e=>e.stopPropagation()}>
 
-<div className="modal-header">
-<h3>Detalle del Reporte</h3>
-<button onClick={()=>cerrarModal(setShowVista)}>✖</button>
+<div className="modal-body">
+
+<div className="modal-row">
+<label>ID del reporte</label>
+<span>{selectedReporte.id}</span>
 </div>
 
-<p><b>ID:</b> {selectedReporte.id}</p>
-<p><b>Folio:</b> {selectedReporte.folio}</p>
+<div className="modal-row">
+<label>Folio</label>
+<span>{selectedReporte.folio}</span>
+</div>
 
-<p>
-<b>Estatus:</b>{" "}
+<div className="modal-row">
+<label>Estatus denuncia</label>
 <span className={`badge badge-denuncia badge-${formatearClase(selectedReporte.estatus_denuncia)}`}>
 {formatearTexto(selectedReporte.estatus_denuncia)}
 </span>
-</p>
+</div>
 
-<p>
-<b>Estado:</b>{" "}
+<div className="modal-row">
+<label>Estado del reporte</label>
 <span className={`badge badge-reporte badge-${formatearClase(selectedReporte.estado_reporte)}`}>
 {selectedReporte.estado_reporte || "Sin información"}
 </span>
-</p>
+</div>
+
+<div className="modal-row">
+<label>Fecha</label>
+<span>{formatearFecha(selectedReporte.fecha)}</span>
+</div>
+
+<div className="modal-row">
+<label>Acciones realizadas</label>
+<span>{selectedReporte.acciones || "Sin información"}</span>
+</div>
+
+<div className="modal-row">
+<label>Conclusiones</label>
+<span>{selectedReporte.conclusiones || "Sin información"}</span>
+</div>
+
+<div className="modal-row">
+<label>Responsable</label>
+<span>{selectedReporte.responsable || "Sin información"}</span>
+</div>
+
+</div>
 
 <div className="estado-botones">
 <button className="btn-estado abierto"
@@ -476,11 +494,6 @@ onClick={() => actualizarEstado("Cerrado")}>
 Cerrar Reporte
 </button>
 </div>
-
-<p><b>Fecha:</b> {formatearFecha(selectedReporte.fecha)}</p>
-<p><b>Acciones:</b> {selectedReporte.acciones}</p>
-<p><b>Conclusiones:</b> {selectedReporte.conclusiones}</p>
-<p><b>Responsable:</b> {selectedReporte.responsable}</p>
 
 </div>
 </div>
