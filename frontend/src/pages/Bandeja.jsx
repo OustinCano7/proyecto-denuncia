@@ -306,7 +306,7 @@ function Bandeja() {
 
     if (filterFolio) {
       temp = temp.filter(d =>
-        String(d.id).includes(filterFolio)
+        Number(d.id) === Number(filterFolio)
       );
     }
 
