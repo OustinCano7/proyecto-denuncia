@@ -99,7 +99,7 @@ export default function DenunciaForm() {
             videos.forEach(v => formData.append("evidencias[]", v));
 
             const resp = await fetch(
-                "http://localhost/proyecto-denuncia/backend/api/submit_denuncia.php",
+                "http://127.0.0.1/proyecto-denuncia/backend/api/submit_denuncia.php",
                 {
                     method: "POST",
                     body: formData,

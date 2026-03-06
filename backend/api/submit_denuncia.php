@@ -23,12 +23,16 @@ header("X-XSS-Protection: 1; mode=block");
 header("Referrer-Policy: no-referrer");
 header("Content-Security-Policy: default-src 'self'");
 
-if (
-    (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') &&
-    (!isset($_SERVER['HTTP_X_FORWARDED_PROTO']) || $_SERVER['HTTP_X_FORWARDED_PROTO'] !== 'https')
-) {
-    echo json_encode(['success'=>false,'error'=>'Conexión insegura']);
-    exit;
+$esLocalhost = $_SERVER['SERVER_NAME'] === 'localhost' || $_SERVER['SERVER_NAME'] === '127.0.0.1';
+
+if (!$esLocalhost) {
+    if (
+        (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') &&
+        (!isset($_SERVER['HTTP_X_FORWARDED_PROTO']) || $_SERVER['HTTP_X_FORWARDED_PROTO'] !== 'https')
+    ) {
+        echo json_encode(['success'=>false,'error'=>'Conexión insegura']);
+        exit;
+    }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
