@@ -396,7 +396,15 @@ return(
 </thead>
 
 <tbody>
-{filtrados.slice(0, 13).map((r)=>(
+
+{filtrados.length === 0 ? (
+<tr>
+<td colSpan="6" className="sin-resultados">
+No se encontraron reportes con los filtros aplicados
+</td>
+</tr>
+) : (
+filtrados.slice(0,13).map((r)=>(
 <tr key={r.id}>
 <td>{r.id}</td>
 <td>{r.folio}</td>
@@ -420,10 +428,27 @@ return(
 Gestionar
 </button>
 </td>
+
 </tr>
-))}
+))
+)}
+
 </tbody>
 </table>
+</div>
+
+<div className="tabla-resultados">
+
+{filtrados.length === 0 ? (
+<p className="sin-resultados">
+0 resultados encontrados
+</p>
+) : (
+<p>
+Mostrando {Math.min(filtrados.length,13)} de {filtrados.length} resultados
+</p>
+)}
+
 </div>
 
 {showVista && selectedReporte && (
